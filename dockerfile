@@ -1,4 +1,10 @@
-FROM python:3.9.7
-WORKDIR /Users/baskara/myapp
-ADD . /Users/baskara/myapp
-["python", "test.py"] 
+FROM python:3
+ADD main.py .
+COPY . /app
+WORKDIR /app
+
+# Install any necessary dependencies
+RUN pip install fastapi uvicorn
+
+# Command to run the FastAPI server when the container starts
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

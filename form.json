@@ -1,36 +1,47 @@
 {
-  "request": [
-    {
-      "id": 1,
-      "username": "user1",
-      "metal": "Stainless Steel",
-      "handle": "Wood",
-      "cutleryType": "Fork",
-      "quantity": 10
-    },
-    {
-      "id": 2,
-      "username": "user2",
-      "metal": "Silver",
-      "handle": "Plastic",
-      "cutleryType": "Spoon",
-      "quantity": 5
-    },
-    {
-      "id": 3,
-      "username": "user3",
-      "metal": "Stainless Steel",
-      "handle": "Wood",
-      "cutleryType": "Knife",
-      "quantity": 8
-    },
-    {
-      "id": 4,
-      "username": "user4",
-      "metal": "Silver",
-      "handle": "Plastic",
-      "cutleryType": "Fork",
-      "quantity": 15
-    }
-  ]
+    "request": [
+        {
+            "id": 1,
+            "username": "user2",
+            "metal": "Silver",
+            "handle": "Plastic",
+            "cutlery_type": "Spoon",
+            "quantity": 5,
+            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170251885895221248/image.png?ex=65585cff&is=6545e7ff&hm=35ce0d41b0a05edd757f4933f7464cef81d86a5dbc7c5aa63d079d894eef86e6&"
+        }
+    ],
+    "metals": [
+        {
+            "metal_id": 1,
+            "name": "Silver"
+        },
+        {
+            "metal_id": 2,
+            "name": "Stainless Steel"
+        }
+    ],
+    "handles": [
+        {
+            "handle_id": 1,
+            "name": "Plastic"
+        },
+        {
+            "handle_id": 2,
+            "name": "Wood"
+        }
+    ],
+    "cutlery_types": [
+        {
+            "type_id": 1,
+            "name": "Spoon"
+        },
+        {
+            "type_id": 2,
+            "name": "Fork"
+        },
+        {
+            "type_id": 3,
+            "name": "Knife"
+        }
+    ]
 }

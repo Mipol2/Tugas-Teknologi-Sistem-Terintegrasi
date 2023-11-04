@@ -1,11 +1,11 @@
 from pydantic import BaseModel
-from typing	import List	
 
 class Request(BaseModel):
-    id: int
+    id: int | None= None
     username: str
     metal: str
     handle: str
-    cutleryType: str
+    cutlery_type: str
     quantity: int
+    image_url: str | None= None
 

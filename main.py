@@ -52,9 +52,7 @@ async def retrieve_all_cutlery_types() -> List[Cutlery_Type]:
 #GET
 @request_router.get("/", response_model=List[Request])
 async def retrieve_all_requests() -> List[Request]:
-    return {
-                "message": "Request Get successfully"
-            }
+    return requests
 
 @request_router.get("/{id}", response_model=Request)
 async def retrieve_request(id: int) -> Request:

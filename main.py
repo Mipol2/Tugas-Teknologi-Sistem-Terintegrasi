@@ -52,7 +52,9 @@ async def retrieve_all_cutlery_types() -> List[Cutlery_Type]:
 #GET
 @request_router.get("/", response_model=List[Request])
 async def retrieve_all_requests() -> List[Request]:
-    return requests
+    return {
+                "message": "Request Get successfully"
+            }
 
 @request_router.get("/{id}", response_model=Request)
 async def retrieve_request(id: int) -> Request:
@@ -114,6 +116,10 @@ async def update_request(id: int, request_data: Request):
                 if key != "id":
                     existing_request[key] = value
 
+            # Update the image_url based on the choices
+            image_url = get_image_url(request_data.metal, request_data.handle, request_data.cutlery_type)
+            existing_request["image_url"] = image_url
+
             # Write the updated data to the JSON file
             with open("form.json", "w") as json_file:
                 data["request"] = requests
@@ -125,6 +131,7 @@ async def update_request(id: int, request_data: Request):
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Request with supplied ID does not exist"
     )
+
 #----------------------------------------------------------------#
 
 #DELETE

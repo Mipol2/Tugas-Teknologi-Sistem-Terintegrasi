@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 import json
 
+#Models
 class Metal(BaseModel):
     metal_id: int
     name: str
@@ -27,6 +28,7 @@ class Request(BaseModel):
 with open("form.json", "r") as json_file:
     data = json.load(json_file)
 
+# Assign the tables
 requests = data.get("request", [])
 metals = data.get("metals", [])
 handles = data.get("handles", [])

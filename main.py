@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 import json
 
-#Models
+# Models
 class Metal(BaseModel):
     metal_id: int
     name: str

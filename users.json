@@ -10,5 +10,11 @@
         "username": "abdul",
         "password_hash": "$2b$12$9QUJJZkgm.0a18SOzZBjTuEurQejNYGJc5/RRT3wO6xj4J8ftGbsy",
         "is_admin": false
+    },
+    {
+        "id": 3,
+        "username": "faiz",
+        "password_hash": "$2b$12$cI0mqRgFx0ggG.nB.QB6A.Cz716CowcjyNMZmQ1lX9tBBi/Akh04O",
+        "is_admin": false
     }
 ]

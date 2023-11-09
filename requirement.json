@@ -17,6 +17,15 @@
             "cutlery_type": "Fork",
             "quantity": 15,
             "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170250147846959114/DALLE_2023-11-04_13.35.31_-_wood_handle_silver_fork_with_white_background.png?ex=65585b61&is=6545e661&hm=f354bfa6fed8d52668e25bd139c6caaa75721ac651040c09bd436639b2db3210&"
+        },
+        {
+            "id": 3,
+            "username": "abdul",
+            "metal": "Stainless Steel",
+            "handle": "Plastic",
+            "cutlery_type": "Knife",
+            "quantity": 16,
+            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170248899919872070/415IEhFdYtL.png?ex=65585a37&is=6545e537&hm=b8d57c9c5dad0ec72e213b2b9cd6e9bdd9c3eebc82da7607a822831597c53f6b&"
         }
     ],
     "metals": [

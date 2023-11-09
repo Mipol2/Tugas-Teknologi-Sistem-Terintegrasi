@@ -1,10 +1,10 @@
 from fastapi import APIRouter, FastAPI, Depends, HTTPException, status, Request
-from typing import List
+from typing import List, Optional
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.hash import bcrypt
 import json
 import jwt
-from models.requirements import Requirement, ReqIn, Metal, Handle, Cutlery_Type
+from models.requirements import Requirement, ReqInAdmin, ReqInUser, Metal, Handle, Cutlery_Type
 from models.users import Token, UserIn, UserJSON
 
 app = FastAPI()
@@ -12,7 +12,7 @@ app = FastAPI()
 JWT_SECRET = 'myjwtsecret'
 
 # Load data from the JSON file
-with open("form.json", "r") as json_file:
+with open("requirement.json", "r") as json_file:
     data = json.load(json_file)
 
 # Assign the tables
@@ -119,7 +119,7 @@ async def retrieve_all_requirements(user: dict = Depends(get_current_user)) -> L
         return requirements  # Return all requirements for admin
     else:
         # Only return requirements for the authenticated user
-        user_requirements = [req for req in requirements if req.get("username") == user["username"]]
+        user_requirements = [req for req in requirements if req.get("username") == user.username]
         return user_requirements
 
 @requirement_router.get("/{id}", response_model=Requirement)
@@ -139,16 +139,74 @@ async def retrieve_requirement(id: int, user: UserJSON = Depends(get_current_use
 
 #POST
 @requirement_router.post("/new", response_model=Requirement)
-async def create_requirement(requirement_data: ReqIn):
-    validate_input(requirement_data, handles, "handle")
-    validate_input(requirement_data, metals, "metal")
-    validate_input(requirement_data, cutlery_types, "cutlery_type")
-    requirement_id = len(requirements) + 1
-    image_url = get_image_url(requirement_data.metal, requirement_data.handle, requirement_data.cutlery_type)
-    new_requirement = {"id": requirement_id, "username": requirement_data.username, "metal": requirement_data.metal, "handle": requirement_data.handle, "cutlery_type": requirement_data.cutlery_type, "quantity": requirement_data.quantity, "image_url": image_url}
+async def create_requirement(
+    requirement_user_data: Optional[ReqInUser] = None,
+    requirement_admin_data: Optional[ReqInAdmin] = None,
+    user: dict = Depends(get_current_user)
+):
+    if user.is_admin:
+        if not requirement_admin_data:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="requirement_admin_data is required for admin user"
+            )
+
+        validate_input(requirement_admin_data, handles, "handle")
+        validate_input(requirement_admin_data, metals, "metal")
+        validate_input(requirement_admin_data, cutlery_types, "cutlery_type")
+
+        requirement_id = len(requirements) + 1
+        image_url = get_image_url(
+            requirement_admin_data.metal,
+            requirement_admin_data.handle,
+            requirement_admin_data.cutlery_type
+        )
+
+        new_requirement = {
+            "id": requirement_id,
+            "username": requirement_admin_data.username,
+            "metal": requirement_admin_data.metal,
+            "handle": requirement_admin_data.handle,
+            "cutlery_type": requirement_admin_data.cutlery_type,
+            "quantity": requirement_admin_data.quantity,
+            "image_url": image_url
+        }
+    else:
+        if not requirement_user_data:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="requirement_user_data is required for regular user"
+            )
+
+        validate_input(requirement_user_data, handles, "handle")
+        validate_input(requirement_user_data, metals, "metal")
+        validate_input(requirement_user_data, cutlery_types, "cutlery_type")
+
+        username = user.username
+        requirement_id = len(requirements) + 1
+        image_url = get_image_url(
+            requirement_user_data.metal,
+            requirement_user_data.handle,
+            requirement_user_data.cutlery_type
+        )
+
+        new_requirement = {
+            "id": requirement_id,
+            "username": username,
+            "metal": requirement_user_data.metal,
+            "handle": requirement_user_data.handle,
+            "cutlery_type": requirement_user_data.cutlery_type,
+            "quantity": requirement_user_data.quantity,
+            "image_url": image_url
+        }
+
     requirements.append(new_requirement)
-    write_users_to_json()
+    # Write the updated data to the JSON file
+    with open("requirement.json", "w") as json_file:
+        data["requirements"] = requirements
+        json.dump(data, json_file, indent=4)
     return new_requirement
+
 
 
 #----------------------------------------------------------------#
@@ -172,7 +230,7 @@ async def update_requirement(id: int, requirement_data: Requirement):
             existing_requirement["image_url"] = image_url
 
             # Write the updated data to the JSON file
-            with open("form.json", "w") as json_file:
+            with open("requirement.json", "w") as json_file:
                 data["requirement"] = requirements
                 json.dump(data, json_file, indent=4)
 
@@ -193,7 +251,7 @@ async def delete_requirement(id: int):
             requirements.remove(requirement)
 
             # Update the JSON data file
-            with open("form.json", "w") as json_file:
+            with open("requirement.json", "w") as json_file:
                 data["requirement"] = requirements
                 json.dump(data, json_file, indent=4)
 

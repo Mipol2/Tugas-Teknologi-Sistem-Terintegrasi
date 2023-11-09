@@ -11,12 +11,19 @@ class Cutlery_Type(BaseModel):
     type_id: int
     name: str
 
-class ReqIn(BaseModel):
+class ReqInAdmin(BaseModel):
     username: str
     metal: str
     handle: str
     cutlery_type: str
     quantity: int
+
+class ReqInUser(BaseModel):
+    metal: str
+    handle: str
+    cutlery_type: str
+    quantity: int
+
 class Requirement(BaseModel):
     id: int
     username: str

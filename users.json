@@ -1,20 +1,14 @@
 [
     {
         "id": 1,
-        "username": "adfg",
-        "password_hash": "$2b$12$YmtAXqar1qAMBFJokdi3u.iz04YQ9CXUiGLFq9ubE/Ip/eLiqgKOy",
+        "username": "jazmy",
+        "password_hash": "$2b$12$5Znb9oUX7f7WS5mGxPJ1UuVwBfwkRAyNnDHRT8LTn1acem2JDt7Cq",
         "is_admin": true
     },
     {
         "id": 2,
-        "username": "user1",
-        "password_hash": "$2b$12$YmtAXqar1qAMBFJokdi3u.iz04YQ9CXUiGLFq9ubE/Ip/eLiqgKOy",
+        "username": "abdul",
+        "password_hash": "$2b$12$9QUJJZkgm.0a18SOzZBjTuEurQejNYGJc5/RRT3wO6xj4J8ftGbsy",
         "is_admin": false
-    },
-    {
-        "id": 3,
-        "username": "admin",
-        "password_hash": "$2b$12$cP/8kdvmzKJiDOGkt0Jy7.HPjQxts6JsMd8RwloQteVp98Zn0KpAG",
-        "is_admin": true
     }
 ]

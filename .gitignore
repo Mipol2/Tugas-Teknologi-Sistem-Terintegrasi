@@ -1,6 +1,6 @@
 __pycache__
 models/__pycache__
-models/users.py
-routes/__pycache__
-routes/users.py
+routes
 venv
+templates
+static

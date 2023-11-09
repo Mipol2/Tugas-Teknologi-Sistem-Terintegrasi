@@ -3,6 +3,34 @@ from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, status
 from typing import List
 import json
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from passlib.hash import bcrypt
+from pydantic import BaseModel
+import json
+import jwt
+
+app = FastAPI()
+
+JWT_SECRET = 'myjwtsecret'
+
+# Pydantic model for user registration
+class UserIn(BaseModel):
+    username: str
+    password: str
+
+# Pydantic model for token response
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+# Pydantic model for user data in JSON file
+class UserJSON(BaseModel):
+    id: int
+    username: str
+    password_hash: str
+    is_admin: bool = False
+
 
 # Models
 class Metal(BaseModel):
@@ -15,14 +43,31 @@ class Cutlery_Type(BaseModel):
     type_id: int
     name: str
 
-class Request(BaseModel):
-    id: int | None= None
+class RequestIn(BaseModel):
     username: str
     metal: str
     handle: str
     cutlery_type: str
     quantity: int
-    image_url: str | None= None
+class Request(BaseModel):
+    id: int
+    username: str
+    metal: str
+    handle: str
+    cutlery_type: str
+    quantity: int
+    image_url: str 
+    
+    # class Config:
+    #     schema_extra={
+    #         "example":{
+    #             "username": "myusername",
+    #             "metal": "Silver",
+    #             "handle": "Wood",
+    #             "cutlery_type": "Spoon",
+    #             "quantity": 10
+    #         }
+    #     }
 
 # Load data from the JSON file
 with open("form.json", "r") as json_file:
@@ -36,6 +81,77 @@ cutlery_types = data.get("cutlery_types", [])
 
 choice_router = APIRouter(tags=["Choices"])
 request_router = APIRouter(tags=["Requests"])
+
+# Load user data from JSON file
+with open("users.json", "r") as json_file:
+    users_data = json.load(json_file)
+
+# Function to write user data to JSON file
+def write_users_to_json():
+    with open("users.json", "w") as json_file:
+        json.dump(users_data, json_file, indent=4)
+
+# Function to authenticate and get user
+def authenticate_user(username: str, password: str):
+    for user in users_data:
+        if user['username'] == username and bcrypt.verify(password, user['password_hash']):
+            return user
+    return None
+
+# OAuth2 password bearer for token authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+
+# Route to generate token
+@app.post('/token', response_model=Token)
+async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail='Invalid username or password'
+        )
+
+    token_data = {"sub": user['username'], "id": user['id']}
+    token = jwt.encode(token_data, JWT_SECRET)
+
+    return {'access_token': token, 'token_type': 'bearer'}
+
+# Dependency to get current user
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
+        user = next((u for u in users_data if u['id'] == payload['id']), None)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail='Invalid username or password'
+            )
+        return user  # Return the user dictionary directly
+    except jwt.JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail='Invalid username or password'
+        )
+
+
+# Route to get current user
+@app.get('/users/me', response_model=UserJSON)
+async def get_user(user: UserJSON = Depends(get_current_user)):
+    return user
+
+# Route to register a new user
+@app.post('/register', response_model=UserJSON)
+async def register_user(user: UserIn):
+    if user.username == "jazmy":
+        is_admin = True
+    user_id = len(users_data) + 1
+    password_hash = bcrypt.hash(user.password)
+    new_user = {"id": user_id, "username": user.username, "password_hash": password_hash, user.is_admin:is_admin}
+    users_data.append(new_user)
+    write_users_to_json()
+    return new_user
+
 
 #GET
 @choice_router.get("/metals", response_model=List[Metal])
@@ -53,51 +169,66 @@ async def retrieve_all_cutlery_types() -> List[Cutlery_Type]:
 
 #GET
 @request_router.get("/", response_model=List[Request])
-async def retrieve_all_requests() -> List[Request]:
-    return requests
+async def retrieve_all_requests(user: dict = Depends(get_current_user)) -> List[Request]:
+    # Check if the user is an admin
+    is_admin = user.get("is_admin", False)
+    if is_admin:
+        return requests  # Return all requests for admin
+    else:
+        # Only return requests for the authenticated user
+        user_requests = [req for req in requests if req.get("username") == user["username"]]
+        return user_requests
 
 @request_router.get("/{id}", response_model=Request)
-async def retrieve_request(id: int) -> Request:
-    for request in requests:
-        if request.get("id") == id:
-            return Request(**request)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Request with supplied ID does not exist"
-    )
+async def retrieve_request(id: int, user: UserJSON = Depends(get_current_user)) -> Request:
+    # Check if the user is an admin or if the request belongs to the authenticated user
+    request_data = next((req for req in requests if req.get("id") == id), None)
+    if user.is_admin or (request_data and request_data.get("username") == user["username"]):
+        return Request(**request_data)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Request with supplied ID does not exist or unauthorized access"
+        )
+
 
 #----------------------------------------------------------------#
 
 #POST
-@request_router.post("/new")
-async def create_request(request_data: Request):
+@request_router.post("/new", response_model=Request)
+async def create_request(request_data: RequestIn):
     validate_input(request_data, handles, "handle")
     validate_input(request_data, metals, "metal")
     validate_input(request_data, cutlery_types, "cutlery_type")
 
-    # Check if the requests list is empty
-    if requests:
-        # The list is not empty, so you can proceed to find the max ID
-        max_id = max(requests, key=lambda request: request["id"])["id"]
-        new_id = max_id + 1
-    else:
-        # The list is empty, so you can start with a new ID of 1
-        new_id = 1
-    request_data.id = new_id
+    # # Check if the requests list is empty
+    # if requests:
+    #     # The list is not empty, so you can proceed to find the max ID
+    #     max_id = max(requests, key=lambda request: request["id"])["id"]
+    #     new_id = max_id + 1
+    # else:
+    #     # The list is empty, so you can start with a new ID of 1
+    #     new_id = 1
+    # request_data.id = new_id
 
-    # Get the image URL based on the choices and add it to the request
+    # # Get the image URL based on the choices and add it to the request
+    # image_url = get_image_url(request_data.metal, request_data.handle, request_data.cutlery_type)
+    # request_data.image_url = image_url
+
+    # # Append the new request to the list
+    # requests.append(request_data.dict())
+
+    # # Write the updated data to the JSON file
+    # with open("form.json", "w") as json_file:
+    #     data["request"] = requests
+    #     json.dump(data, json_file, indent=4)
+
+    request_id = len(requests) + 1
     image_url = get_image_url(request_data.metal, request_data.handle, request_data.cutlery_type)
-    request_data.image_url = image_url
-
-    # Append the new request to the list
-    requests.append(request_data.dict())
-
-    # Write the updated data to the JSON file
-    with open("form.json", "w") as json_file:
-        data["request"] = requests
-        json.dump(data, json_file, indent=4)
-
-    return request_data
+    new_request = {"id": request_id, "username": request_data.username, "metal": request_data.metal, "handle": request_data.handle, "cutlery_type": request_data.cutlery_type, "quantity": request_data.quantity, "image_url": image_url}
+    requests.append(new_request)
+    write_users_to_json()
+    return new_request
 
 
 #----------------------------------------------------------------#
@@ -187,7 +318,5 @@ def get_image_url(metal: str, handle: str, cutlery_type: str) -> str:
 
     return image_url
 
-
-app	=	FastAPI()
 app.include_router(request_router,	prefix="/requests")
 app.include_router(choice_router,	prefix="/choices")

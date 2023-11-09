@@ -2,7 +2,7 @@
     "request": [
         {
             "id": 1,
-            "username": "user3",
+            "username": "user1",
             "metal": "Stainless Steel",
             "handle": "Wood",
             "cutlery_type": "Knife",
@@ -17,6 +17,15 @@
             "cutlery_type": "Knife",
             "quantity": 8,
             "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170249065523597312/1823130.png?ex=65585a5f&is=6545e55f&hm=bb5b5aabe6d2dd0a6188860ac01adb8bebc5e24b79379c9dc9e2cbd8b3a79755&"
+        },
+        {
+            "id": 3,
+            "username": "user5",
+            "metal": "Silver",
+            "handle": "Wood",
+            "cutlery_type": "Fork",
+            "quantity": 15,
+            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170250147846959114/DALLE_2023-11-04_13.35.31_-_wood_handle_silver_fork_with_white_background.png?ex=65585b61&is=6545e661&hm=f354bfa6fed8d52668e25bd139c6caaa75721ac651040c09bd436639b2db3210&"
         }
     ],
     "metals": [

@@ -16,7 +16,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 # Function to write user data to JSON file
 def write_users_to_json():
-    with open("users.json", "w") as json_file:
+    with open("data/users.json", "w") as json_file:
         json.dump(users_data, json_file, indent=4)
 
 # Function to authenticate and get user

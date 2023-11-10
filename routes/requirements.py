@@ -122,7 +122,7 @@ async def create_requirement(
 
     requirements.append(new_requirement)
     # Write the updated data to the JSON file
-    with open("requirement.json", "w") as json_file:
+    with open("data/requirement.json", "w") as json_file:
         data["requirements"] = requirements
         json.dump(data, json_file, indent=4)
     return new_requirement
@@ -166,7 +166,7 @@ async def update_requirement(
     existing_requirement["image_url"] = image_url
 
     # Write the updated data to the JSON file
-    with open("requirement.json", "w") as json_file:
+    with open("data/requirement.json", "w") as json_file:
         data["requirements"] = requirements  # Ensure it's 'requirements' not 'requirement'
         json.dump(data, json_file, indent=4)
 
@@ -192,7 +192,7 @@ async def delete_requirement(
     reassign_ids()  # Reassign IDs after deletion
 
     # Update the JSON data file
-    with open("requirement.json", "w") as json_file:
+    with open("data/requirement.json", "w") as json_file:
         data["requirement"] = requirements
         json.dump(data, json_file, indent=4)
 

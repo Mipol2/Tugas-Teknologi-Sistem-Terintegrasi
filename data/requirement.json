@@ -5,9 +5,9 @@
             "username": "abdul",
             "metal": "Stainless Steel",
             "handle": "Plastic",
-            "cutlery_type": "Knife",
+            "cutlery_type": "Fork",
             "quantity": 16,
-            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170248899919872070/415IEhFdYtL.png?ex=65585a37&is=6545e537&hm=b8d57c9c5dad0ec72e213b2b9cd6e9bdd9c3eebc82da7607a822831597c53f6b&"
+            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170251199279288360/images.png?ex=65585c5c&is=6545e75c&hm=74c0d129252bafd4bbd5a34cf4e422ff59049eb591bd51c4066a7316ea21167f&"
         },
         {
             "id": 2,
@@ -17,15 +17,6 @@
             "cutlery_type": "Spoon",
             "quantity": 20,
             "image_url": "https://media.discordapp.net/attachments/1170248640145670164/1170251681586491453/417djo180-L.png?ex=65585ccf&is=6545e7cf&hm=03d35e08dabb4d79194c45b656bf8a144c0708d268128742d0cd95367430339d&=&width=656&height=656"
-        },
-        {
-            "id": 3,
-            "username": "faiz",
-            "metal": "Stainless Steel",
-            "handle": "Wood",
-            "cutlery_type": "Fork",
-            "quantity": 12,
-            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170251578230452245/1957080.png?ex=65585cb6&is=6545e7b6&hm=eeee1586eb04ddc3d001e96d890640ef54c6254a4ebb3b80ab253833f7066e2d&"
         }
     ],
     "metals": [
@@ -80,15 +71,6 @@
             "cutlery_type": "Spoon",
             "quantity": 20,
             "image_url": "https://media.discordapp.net/attachments/1170248640145670164/1170251681586491453/417djo180-L.png?ex=65585ccf&is=6545e7cf&hm=03d35e08dabb4d79194c45b656bf8a144c0708d268128742d0cd95367430339d&=&width=656&height=656"
-        },
-        {
-            "id": 3,
-            "username": "faiz",
-            "metal": "Stainless Steel",
-            "handle": "Wood",
-            "cutlery_type": "Fork",
-            "quantity": 12,
-            "image_url": "https://cdn.discordapp.com/attachments/1170248640145670164/1170251578230452245/1957080.png?ex=65585cb6&is=6545e7b6&hm=eeee1586eb04ddc3d001e96d890640ef54c6254a4ebb3b80ab253833f7066e2d&"
         }
     ]
 }

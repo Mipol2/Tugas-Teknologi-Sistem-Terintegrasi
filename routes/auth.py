@@ -4,6 +4,11 @@ from passlib.hash import bcrypt
 import jwt
 import json
 from models.users import Token, UserIn, UserJSON
+import requests
+
+
+# Corrected base URL with the http:// or https:// prefix
+FRIENDS_API_BASE_URL = "http://127.0.0.1:8000" 
 
 # Load user data from JSON file
 with open("data/users.json", "r") as json_file:
@@ -71,15 +76,32 @@ async def get_user(user: UserJSON = Depends(get_current_user)):
 
 # Route to register a new user
 @auth_router.post('/register', response_model=UserJSON)
-async def register_user(user: UserIn):
+async def register_user_and_friends(user: UserIn):
+    # Register the user in your own service
     user_id = len(users_data) + 1
     password_hash = bcrypt.hash(user.password)
     
     is_admin = False
     if user.username == "jazmy":
         is_admin = True
-        
-    new_user = {"id": user_id, "username": user.username, "password_hash": password_hash, "is_admin": is_admin}
+
+    # Register the user in your friend's API using URL parameters
+    response = requests.post(f"{FRIENDS_API_BASE_URL}/users", params={"username": user.username, "password": user.password})
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Error registering user with your friend's API.")
+    
+    # Obtain a token from your friend's API
+    token_response = requests.post(f"{FRIENDS_API_BASE_URL}/token", data={"username": user.username, "password": user.password})
+    
+    if token_response.status_code == 200:
+        integrasi_token = token_response.json().get("access_token")
+    else:
+        raise HTTPException(status_code=token_response.status_code, detail="Error obtaining token from your friend's API.")
+    
+    # Store the integration token in your user data
+    new_user = {"id": user_id, "username": user.username, "password_hash": password_hash, "is_admin": is_admin, "integrasi_token": integrasi_token}
     users_data.append(new_user)
     write_users_to_json()
+    
     return new_user

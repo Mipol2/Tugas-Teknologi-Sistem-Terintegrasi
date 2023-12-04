@@ -16,3 +16,4 @@ class UserJSON(BaseModel):
     username: str
     password_hash: str
     is_admin: bool
+    integrasi_token: str

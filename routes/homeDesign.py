@@ -38,7 +38,7 @@ async def create_home_design(
     
     # Use integrasi_token for authentication with your friend's service
     headers = {"Authorization": f"Bearer {integrasi_token}"}
-    desainname = user.username.join(desainname)
+    desainname = user.username+ '_' +desainname
     form_data = {
         "desainname": desainname,
         "deskripsi": deskripsi,

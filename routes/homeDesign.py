@@ -68,8 +68,11 @@ async def get_home_design(token: str = Depends(oauth2_scheme)):
     headers = {"Authorization": f"Bearer {integrasi_token}"}
     response = requests.get(f"{FRIENDS_API_BASE_URL}/desain", headers=headers)
 
-    
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail="Error retrieving home design.")
 
-    return response.json()
+    # Filter the response data to include only designs that start with the user's username
+    designs = response.json()
+    user_designs = [design for design in designs if design['desainname'].startswith(user.username)]
+
+    return user_designs

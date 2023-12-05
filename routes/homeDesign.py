@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Form, status
 from fastapi.security import OAuth2PasswordBearer
 import requests
-from .auth import Token, get_current_user
+from .auth import get_current_user
 from pydantic import BaseModel
 from models.users import UserJSON
 from routes.auth import get_current_user
@@ -56,8 +56,8 @@ async def create_home_design(
     return response.json()
 
 
-@home_design_router.get("/{id}")
-async def get_home_design(id: int, token: str = Depends(oauth2_scheme)):
+@home_design_router.get("/")
+async def get_home_design(token: str = Depends(oauth2_scheme)):
     # Get the current user based on the token
     user = await get_current_user(token)
 

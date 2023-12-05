@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.hash import bcrypt
 import jwt
 import json
 from models.users import Token, UserIn, UserJSON
 import requests
-
+from fastapi.templating import Jinja2Templates
 
 # Corrected base URL with the http:// or https:// prefix
 FRIENDS_API_BASE_URL = "http://127.0.0.1:8000" 
@@ -34,6 +34,11 @@ def authenticate_user(username: str, password: str):
 # OAuth2 password bearer for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
+templates = Jinja2Templates(directory="./Frontend")
+
+@auth_router.get("/login")
+async def login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
 # Route to generate token
 @auth_router.post('/token', response_model=Token)

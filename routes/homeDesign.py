@@ -38,7 +38,7 @@ async def create_home_design(
     
     # Use integrasi_token for authentication with your friend's service
     headers = {"Authorization": f"Bearer {integrasi_token}"}
-    
+    desainname = user.username.join(desainname)
     form_data = {
         "desainname": desainname,
         "deskripsi": deskripsi,
@@ -68,6 +68,7 @@ async def get_home_design(token: str = Depends(oauth2_scheme)):
     headers = {"Authorization": f"Bearer {integrasi_token}"}
     response = requests.get(f"{FRIENDS_API_BASE_URL}/desain", headers=headers)
 
+    
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail="Error retrieving home design.")
 

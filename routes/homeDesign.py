@@ -16,7 +16,6 @@ class DesignData(BaseModel):
     nohp: str
 
 home_design_router = APIRouter(tags=["Home Design"])
-JWT_SECRET = 'myjwtsecret'
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 # Corrected base URL with the http:// or https:// prefix
 FRIENDS_API_BASE_URL = "http://127.0.0.1:8000" 

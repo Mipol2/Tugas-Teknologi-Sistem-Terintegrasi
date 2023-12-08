@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from models.users import UserJSON
 from routes.auth import get_current_user
 
-# Pydantic model for user registration
 class DesignData(BaseModel):
     designname: str
     deskripsi: str
@@ -17,8 +16,7 @@ class DesignData(BaseModel):
 
 home_design_router = APIRouter(tags=["Home Design"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
-# Corrected base URL with the http:// or https:// prefix
-FRIENDS_API_BASE_URL = "http://127.0.0.1:8000" 
+FRIENDS_API_BASE_URL = "desainfastapiauth.dthyb2e7a7aneqb9.southeastasia.azurecontainer.io" 
 
 
 @home_design_router.post("/create")
@@ -35,7 +33,7 @@ async def create_home_design(
     # Obtain the integrasi_token based on the user's token
     integrasi_token = user.integrasi_token
     
-    # Use integrasi_token for authentication with your friend's service
+    # Use integrasi_token for authentication friend's service
     headers = {"Authorization": f"Bearer {integrasi_token}"}
     desainname = user.username+ '_' +desainname
     form_data = {
@@ -63,7 +61,7 @@ async def get_home_design(token: str = Depends(oauth2_scheme)):
     # Obtain the integrasi_token from the current user
     integrasi_token = user.integrasi_token
 
-    # Use integrasi_token for authentication with your friend's service
+    # Use integrasi_token for authentication with friend's service
     headers = {"Authorization": f"Bearer {integrasi_token}"}
     response = requests.get(f"{FRIENDS_API_BASE_URL}/desain", headers=headers)
 
